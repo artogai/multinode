@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  import: "dev.ogai.multinode.model.Types.UserName"
+};
+
+package dev.ogai.multinode.grpc;
+
+import "model/game/Game.proto";
+
+service Api {
+  rpc ListGames (ListGamesReq) returns (ListGamesResp) {}
+}
+
+message ListGamesReq {
+  string userName = 1 [(scalapb.field).type = "UserName"];
+  Paging paging = 2;
+}
+
+message ListGamesResp {
+  repeated model.game.Game games = 1;
+}
+
+message Paging {
+  int32 size   = 1;
+  int32 number = 2;
+}

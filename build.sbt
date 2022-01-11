@@ -1,6 +1,7 @@
-ThisBuild / organization := "work.ogai"
-ThisBuild / scalaVersion := "2.13.7"
+ThisBuild / organization := "dev.ogai"
 name                     := "multinode"
+ThisBuild / scalaVersion := "2.13.7"
 
-lazy val `producer` = project.in(file("producer"))
-lazy val `consumer` = project.in(file("consumer"))
+lazy val model  = protoModule("model")
+lazy val loader = module("loader").dependsOn(model)
+lazy val api    = zioGrpcModule("api").dependsOn(model)

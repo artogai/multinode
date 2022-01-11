@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package dev.ogai.multinode.model.game;
+
+message MoveEval {
+  message Judgment {
+    string name = 1;
+    string comment = 2;
+  }
+
+  int32 eval = 1;
+  string best = 2;
+  string variation = 3;
+  Judgment judgment = 4;
+}

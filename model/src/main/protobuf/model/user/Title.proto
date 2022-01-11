@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  enum_strip_prefix: true
+};
+
+package dev.ogai.multinode.model.user;
+
+enum Title {
+  TITLE_UNKNOWN = 0;
+  TITLE_EMPTY = 1;
+  TITLE_GM = 2;
+  TITLE_WGM = 3;
+  TITLE_IM = 4;
+  TITLE_WIM = 5;
+  TITLE_FM = 6;
+  TITLE_WFM = 7;
+  TITLE_NM = 8;
+  TITLE_CM = 9;
+  TITLE_WCM = 10;
+  TITLE_WNM = 11;
+  TITLE_LM = 12;
+  TITLE_BOT = 13;
+}

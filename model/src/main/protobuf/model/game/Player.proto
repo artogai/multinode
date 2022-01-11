@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  import: "dev.ogai.multinode.model.Types.UserName"
+};
+
+package dev.ogai.multinode.model.game;
+import "model/user/User.proto";
+
+message Player {
+  message Analysis {
+    int32 inaccuracy = 1;
+    int32 mistake = 2;
+    int32 blunder = 3;
+    int32 acpl = 4;
+  }
+
+  user.User user = 1;
+  int32 rating = 2;
+  int32 ratingDiff = 3;
+  string name = 4 [(scalapb.field).type = "UserName"];
+  bool provisional = 5;
+  int32 aiLevel = 6;
+  Analysis analysis = 7;
+  string team = 8;
+}

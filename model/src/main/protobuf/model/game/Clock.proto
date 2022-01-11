@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package dev.ogai.multinode.model.game;
+
+message Clock {
+  int32 intital = 1;
+  int32 increment = 2;
+  int32 totalTime = 3;
+}

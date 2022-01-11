@@ -1,4 +1,4 @@
-{ jdk ? "jdk11" }:
+{ jdk ? "jdk17" }:
 let
   pkgs = import ./nix/pkgs.nix { inherit jdk; };
 in

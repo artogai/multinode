@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  enum_strip_prefix: true
+};
+
+package dev.ogai.multinode.model.game;
+
+enum Status {
+  STATUS_UNKNOWN = 0;
+  STATUS_CREATED = 1;
+  STATUS_STARTED = 2;
+  STATUS_ABORTED = 3;
+  STATUS_MATE = 4;
+  STATUS_RESIGN = 5;
+  STATUS_STALEMATE = 6;
+  STATUS_TIMEOUT = 7;
+  STATUS_DRAW = 8;
+  STATUS_OUT_OF_TIME = 9;
+  STATUS_CHEAT = 10;
+  STATUS_NO_START = 11;
+  STATUS_UNKNOWN_FINISH = 12;
+  STATUS_VARIANT_END = 13;
+}

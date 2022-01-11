@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  import: "dev.ogai.multinode.model.Types.UserName"
+};
+
+package dev.ogai.multinode.model.user;
+
+import "model/user/Title.proto";
+
+message User {
+  string id = 1;
+  string name = 2 [(scalapb.field).type = "UserName"];;
+  Title title = 3;
+  bool patron = 4;
+}

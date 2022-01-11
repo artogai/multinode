@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+
+import "scalapb/scalapb.proto";
+option (scalapb.options) = {
+  import: "dev.ogai.multinode.model.Types.{ GameId, TimestampMs, UserName }"
+};
+package dev.ogai.multinode.model.game;
+
+import "model/game/Variant.proto";
+import "model/game/Speed.proto";
+import "model/game/Status.proto";
+import "model/game/Player.proto";
+import "model/game/Color.proto";
+import "model/game/Opening.proto";
+import "model/game/MoveEval.proto";
+import "model/game/Clock.proto";
+
+message Game {
+  string id = 1 [(scalapb.field).type = "GameId"];
+  bool rated = 2;
+  Variant variant = 3;
+  Speed speed = 4;
+  string perf = 5;
+  int64 createdAt = 6 [(scalapb.field).type = "TimestampMs"];
+  int64 lastMoveAt = 7 [(scalapb.field).type = "TimestampMs"];
+  Status status = 8;
+  Player white = 9;
+  Player black = 10;
+  string initialFen = 11;
+  Color winner = 12;
+  Opening opening = 13;
+  string moves = 14;
+  string pgn = 15;
+  int32 daysPerTurn = 16;
+  repeated MoveEval analysis = 17;
+  string tournament = 18;
+  string swiss = 19;
+  Clock clock = 20;
+  string source = 21 [(scalapb.field).type = "UserName"];
+}
