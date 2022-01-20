@@ -2,9 +2,13 @@ package dev.ogai.multinode.api
 
 import dev.ogai.multinode.api.GamesStorage.GamesStorage
 import dev.ogai.multinode.grpc.Api.{ ListGamesReq, ListGamesResp, Paging, ZioApi }
+import dev.ogai.multinode.model.Types.GameId
+import dev.ogai.multinode.model.game.Game.Game
+import dev.ogai.multinode.model.kafka.Topic
 import io.grpc.Status
 import zio.kafka.consumer.ConsumerSettings
 import zio.logging.Logging
+import zio.random.Random
 import zio.{ Has, RLayer, URLayer, ZLayer }
 
 object Api {
@@ -12,12 +16,12 @@ object Api {
 
   object Service {
 
-    val live: RLayer[Has[ConsumerSettings] with Logging with CB, Api] =
+    lazy val live: RLayer[Has[ConsumerSettings] with Has[Topic[GameId, Game]] with Logging with Random with CB, Api] =
       GamesStream.Service.kafka >>>
         GamesStorage.Service.inMemory >>>
         Api.Service.impl
 
-    val impl: URLayer[GamesStorage, Api] =
+    lazy val impl: URLayer[GamesStorage, Api] =
       ZLayer.fromService { gamesStorage: GamesStorage.Service => (req: ListGamesReq) =>
         gamesStorage
           .listGames(req.userName, req.paging.getOrElse(defaultPaging))

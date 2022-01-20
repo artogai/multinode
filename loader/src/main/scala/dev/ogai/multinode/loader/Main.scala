@@ -18,7 +18,7 @@ object Main extends IOApp.Simple {
       .compile
       .drain
 
-  def createTopic[F[_]: Async, V](topic: Topic[V], cfg: Config.Kafka): F[Unit] =
+  def createTopic[F[_]: Async, K, V](topic: Topic[K, V], cfg: Config.Kafka): F[Unit] =
     KafkaAdminClient
       .resource[F](AdminClientSettings(cfg.bootstrapServers))
       .use(_.createTopic(topic.asNewTopic))

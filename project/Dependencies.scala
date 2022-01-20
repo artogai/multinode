@@ -13,7 +13,7 @@ object Dependencies {
     val fs2Kafka   = "2.3.0"
     val zioKafka   = "0.17.3"
     val scalaPb    = "0.11.8"
-    val grpc       = "1.30.2"
+    val grpc       = "1.43.2"
     val http4s     = "0.23.7"
     val protobuf   = "3.12.0"
     val newtype    = "0.4.4"
@@ -34,22 +34,27 @@ object Dependencies {
     def kernel       = "org.typelevel" %% "cats-kernel"        % version.cats
     def effect       = "org.typelevel" %% "cats-effect"        % version.catsEffect
     def effectKernel = "org.typelevel" %% "cats-effect-kernel" % version.catsEffect
+    def logging      = "org.typelevel" %% "log4cats-slf4j"     % version.log4cats
   }
 
   object fs2 {
-    def core = "co.fs2" %% "fs2-core" % version.fs2
-    def io   = "co.fs2" %% "fs2-io"   % version.fs2
+    def core  = "co.fs2"          %% "fs2-core"  % version.fs2
+    def io    = "co.fs2"          %% "fs2-io"    % version.fs2
+    def kafka = "com.github.fd4s" %% "fs2-kafka" % version.fs2Kafka
   }
 
   object zio {
-    def zio     = "dev.zio" %% "zio"         % version.zio
-    def streams = "dev.zio" %% "zio-streams" % version.zio
+    def zio     = "dev.zio" %% "zio"               % version.zio
+    def streams = "dev.zio" %% "zio-streams"       % version.zio
+    def kafka   = "dev.zio" %% "zio-kafka"         % version.zioKafka
+    def logging = "dev.zio" %% "zio-logging-slf4j" % version.zioLogging
+    def test    = "dev.zio" %% "zio-test"          % version.zio
+    def testSbt = "dev.zio" %% "zio-test-sbt"      % version.zio
   }
 
   object kafka {
-    def client   = "org.apache.kafka" % "kafka-clients" % version.kafka
-    def fs2Kafka = "com.github.fd4s" %% "fs2-kafka"     % version.fs2Kafka
-    def zioKafka = "dev.zio"         %% "zio-kafka"     % version.zioKafka
+    def client = "org.apache.kafka"  % "kafka-clients" % version.kafka
+    def server = "org.apache.kafka" %% "kafka"         % version.kafka
   }
 
   object grpc {
@@ -77,10 +82,6 @@ object Dependencies {
 
   object logging {
 
-    // api
-    def log4cats   = "org.typelevel" %% "log4cats-slf4j"    % version.log4cats
-    def zioLogging = "dev.zio"       %% "zio-logging-slf4j" % version.zioLogging
-
     // sink
     def slf4j = "org.slf4j" % "slf4j-api" % version.slf4j
 
@@ -92,7 +93,7 @@ object Dependencies {
     // impl
     def logback = "ch.qos.logback" % "logback-classic" % version.logback
 
-    def all = Seq(slf4j, jcl, log4j, jul, logback)
+    def default = Seq(slf4j, jcl, log4j, jul, logback)
 
     def exclude = Seq(
       ExclusionRule("commons-logging", "commons-logging"),
@@ -100,12 +101,7 @@ object Dependencies {
     )
   }
 
-  object test {
-    def utest      = "com.lihaoyi" %% "utest"        % version.utest % "test"
-    def zioTest    = "dev.zio"     %% "zio-test"     % version.zio   % "test"
-    def zioTestSbt = "dev.zio"     %% "zio-test-sbt" % version.zio   % "test"
-
-  }
+  def utest = "com.lihaoyi" %% "utest" % version.utest
 
   object plugins {
     def organizeImports = "com.github.liancheng" %% "organize-imports" % version.organizeImports

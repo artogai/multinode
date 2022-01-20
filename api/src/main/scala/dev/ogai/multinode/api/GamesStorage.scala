@@ -21,7 +21,7 @@ object GamesStorage {
 
   object Service {
 
-    val inMemory: RLayer[GamesStream, GamesStorage] = {
+    lazy val inMemory: RLayer[GamesStream, GamesStorage] = {
       def getPage[K, V](xs: SortedMap[K, V], p: Paging): Seq[V] =
         xs.iterator
           .map(_._2)

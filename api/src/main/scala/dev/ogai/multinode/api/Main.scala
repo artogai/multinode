@@ -1,48 +1,55 @@
 package dev.ogai.multinode.api
 
-import dev.ogai.multinode.model.kafka.{ Topic, Topics }
-import io.grpc.ServerBuilder
+import dev.ogai.multinode.model.Types.GameId
+import dev.ogai.multinode.model.game.Game.Game
+import dev.ogai.multinode.model.kafka.Topic
+import io.grpc.netty.NettyServerBuilder
 import io.grpc.protobuf.services.ProtoReflectionService
 import scalapb.zio_grpc.{ Server, ServerLayer }
 import zio.blocking.Blocking
-import zio.kafka.admin.{ AdminClient, AdminClientSettings }
 import zio.kafka.consumer.ConsumerSettings
 import zio.logging.Logging
-import zio.{ ExitCode, Has, RIO, RLayer, ULayer, URIO, ZEnv, ZIO, ZLayer }
+import zio.random.Random
+import zio.{ ExitCode, Has, RLayer, ULayer, URIO, ZEnv, ZLayer }
 
 object Main extends zio.App {
 
   override def run(args: List[String]): URIO[ZEnv, ExitCode] =
-    (createTopic(Topics.games) *>
-      server.build.useForever)
-      .provideCustomLayer(settings)
+    server
+      .build
+      .useForever
+      .provideCustomLayer(
+        Blocking.any
+          ++ Logger.live
+          ++ settings
+          >+> Kafka.liveTopic
+      )
       .exitCode
 
-  val settings: ULayer[Has[Config] with Has[ConsumerSettings] with Logging] =
-    Logger.live ++
-      Config.live >+> KafkaSettings.consumer
+  lazy val settings: ULayer[Has[Config] with Has[ConsumerSettings]] =
+    Config.live >+> Kafka.consumerSettings
 
-  val server: RLayer[Has[Config] with Has[ConsumerSettings] with Logging with CB, Has[Server.Service]] =
+  lazy val server: RLayer[Has[Config] with Has[ConsumerSettings] with Has[
+    Topic[GameId, Game]
+  ] with Logging with Random with CB, Has[Server.Service]] =
     ZLayer
       .service[Config]
       .flatMap { cfg =>
-        ServerLayer
-          .fromServiceLayer(
-            ServerBuilder
-              .forPort(cfg.get[Config].grpcPort)
-              .addService(ProtoReflectionService.newInstance())
-          )(
-            Api.Service.live
-          )
-      }
+        val grpcPort = cfg.get[Config].grpcPort
 
-  def createTopic[V](topic: Topic[V]): RIO[Has[Config] with Blocking, Unit] =
-    ZIO
-      .service[Config]
-      .flatMap { cfg =>
-        AdminClient
-          .make(AdminClientSettings(cfg.bootstrapServers))
-          .use(_.createTopic(topic.asZioNewTopic))
+        ZLayer
+          .fromEffect(Logging.info(s"Starting grpc server port=[$grpcPort]"))
+          .flatMap { _ =>
+            ServerLayer
+              .fromServiceLayer(
+                NettyServerBuilder
+                  .forPort(grpcPort)
+                  .addService(ProtoReflectionService.newInstance())
+              )(
+                Api.Service.live
+              )
+              .tap(_ => Logging.info("Grpc server started"))
+          }
       }
 
 }

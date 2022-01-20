@@ -1,6 +1,6 @@
 package multinode.build.modules
 
-import sbt._
+import sbt.{ Def, _ }
 import Keys._
 import multinode.build.Dependencies
 
@@ -9,9 +9,18 @@ object SubModule extends AutoPlugin {
   override def trigger: PluginTrigger = noTrigger
 
   import RootModule.autoImport._
-  override lazy val projectSettings = Seq(
+  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
     addCompilerPlugin(Dependencies.plugins.kindProjector),
     addCompilerPlugin(Dependencies.plugins.betterMonadicFor),
+    libraryDependencies ++= lib.logging.default,
     excludeDependencies ++= lib.exclude,
+    Test / fork            := true,
+    IntegrationTest / fork := true,
+  ) ++
+    Defaults.itSettings
+
+  override lazy val projectConfigurations = Seq(
+    IntegrationTest.extend(Test)
   )
+
 }

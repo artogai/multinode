@@ -26,6 +26,12 @@ object RootModule extends AutoPlugin {
 
     def zioGrpcModule(id: String) =
       grpcModule(id).enablePlugins(ZioGrpcModule)
+
+    implicit class ProjectExt(val proj: Project) extends AnyVal {
+      def dependsOnWithTests(dep: Project): Project =
+        proj.dependsOn(dep % "compile->compile;test->test")
+    }
+
   }
 
 }

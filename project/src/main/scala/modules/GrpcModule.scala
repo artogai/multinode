@@ -21,8 +21,8 @@ object GrpcModule extends AutoPlugin {
   override def projectSettings: Seq[Setting[_]] =
     Seq(
       libraryDependencies ++= Seq(
-        Dependencies.scalapb.`runtime-grpc`,
         Dependencies.grpc.netty,
+        Dependencies.scalapb.`runtime-grpc`,
       ),
       scalapbGenOptions += GeneratorOption.Grpc,
       depsProtoSources := Def.settingDyn {
